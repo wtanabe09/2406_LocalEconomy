@@ -11,7 +11,7 @@ type Prefecture = {
 export const ListPrefecture = () => {
   const [prefectures, setPrefectures] = useState<Prefecture[]>([]);
 
-  const getPrefecuters = async () => {
+  const setupPrefecuters = async () => {
     try {
       const res = await fetch("/api/prefecture");
       if(!res.ok) {
@@ -31,7 +31,7 @@ export const ListPrefecture = () => {
   }
 
   useEffect(() => {
-    getPrefecuters();
+    setupPrefecuters();
   }, []);
 
   useEffect(() => {
