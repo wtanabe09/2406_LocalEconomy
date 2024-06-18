@@ -2,8 +2,6 @@
 
 import { usePrefContext } from "../contexts/usePrefContext";
 
-
-
 export const ListPrefecture = () => {
   const { prefectures, setPrefectures } = usePrefContext();
 
