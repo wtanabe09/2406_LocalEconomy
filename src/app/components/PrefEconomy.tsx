@@ -1,27 +1,17 @@
 "use client";
 
+import { PrefProvider } from "../contexts/PrefecturesContext";
+import { usePrefContext } from "../contexts/usePrefContext";
+import { Children } from "./Children";
 import { ListPrefecture } from "./ListPrefecture"
-import { useContext, createContext} from "react";
-
-type ValueContextProps = {
-  value: string;
-}
-const ValueContext = createContext<ValueContextProps>({ value: "" });
 
 export const PrefEconomy = () => {
-  const sharedValue = "Hello";
-  
   return(
     <div>
-      <ValueContext.Provider value={{ value: sharedValue }}>
+      <PrefProvider>
         <ListPrefecture />
         <Children />
-      </ValueContext.Provider>
+      </PrefProvider>
     </div>
   )
-}
-
-export const Children = () => {
-  const { value } = useContext(ValueContext);
-  return <div>children: {value}</div>
 }
