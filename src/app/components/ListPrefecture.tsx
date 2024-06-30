@@ -2,13 +2,14 @@
 
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { useEffect, useRef, useState } from "react";
+import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { usePrefContext } from "../contexts/usePrefContext";
 
 type chartOptions = {name: string, data: number[]}[];
 export const ListPrefecture = () => {
   const { prefectures, setPrefectures } = usePrefContext();
   const [graphType, setGraphType] = useState<number|null>(0);
+  const [categories, setCategories] = useState<number[]|null>(null);
   const [title, setTitle] = useState<string|null>(null);
   const [series, setSeries] = useState<chartOptions|null>([]);
   const [options, setOptions] = useState<Highcharts.Options|null>(null);
@@ -28,17 +29,17 @@ export const ListPrefecture = () => {
 
   const setGraphData = (populations: [{ label: string, data: [] }], selectedOption: number, prefName: string) => {
     if(populations) {
-      let axisCategories = [];
+      let axisCategories: number[] = [];
       let populationData: number[] = [];
-      console.log(populations[selectedOption].label);
       setTitle(populations[selectedOption].label);
 
       populations[selectedOption].data.forEach((d: { year: number, value: number }) => {
-        axisCategories.push(d.year)
-        populationData.push(d.value)
+        axisCategories.push(d.year);
+        populationData.push(d.value);
       });
 
-      setSeries([...series!, { name: prefName, data: populationData }]);
+      setCategories(axisCategories);
+      setSeries((series) => [...series!, { name: prefName, data: populationData }]);
     }
   }
   
@@ -52,6 +53,7 @@ export const ListPrefecture = () => {
     });
     setPrefectures(updatedPrefectures);
 
+    // checkされたprefecturesを下にseriesを作成
     const prefecture = updatedPrefectures.find((pref) => pref.id === id);
     if (prefecture?.checked) {
       const populations = await getPopulation(id);
@@ -63,16 +65,29 @@ export const ListPrefecture = () => {
     }
   }
 
-  // const handleButton = () => {
-  //   setGraphType(graphType => graphType! + 2);
-  //   console.log("button ");
-  // }
+  const handleButton = (type: number) => {
+    setGraphType(type);
+  }
+
+  useEffect(() => {
+    setSeries([]);
+    prefectures.forEach(async (prefecture) => {
+      if (prefecture.checked) {
+        const populations = await getPopulation(prefecture.id);
+        setGraphData(populations, graphType!, prefecture.name);
+      } else {
+        setSeries((prevSeries) =>
+          prevSeries!.filter((serie) => serie.name !== prefecture?.name)
+        );
+      }
+    });
+  }, [graphType]);
 
   useEffect(() => {
     setOptions({
       xAxis: {
         title: { text: "年度" },
-        categories: [],
+        categories: categories,
       },
       yAxis: {
         title: { text: "人口数" },
@@ -80,7 +95,7 @@ export const ListPrefecture = () => {
       title: { text: title },
       series: series
     });
-  }, [series, title, graphType]);
+  }, [series, title]);
 
   return(
     <div>
@@ -105,9 +120,10 @@ export const ListPrefecture = () => {
         )
       }
       <h1>Graph</h1>
-      <button key={1} onClick={handleButton}>Button1</button>
-      <button key={2} onClick={handleButton}>Button1</button>
-      <button key={3} onClick={handleButton}>Button1</button>
+      <button key={1} onClick={() => handleButton(0)}>総人口</button>
+      <button key={2} onClick={() => handleButton(1)}>年少人口</button>
+      <button key={3} onClick={() => handleButton(2)}>生産年齢人口</button>
+      <button key={4} onClick={() => handleButton(3)}>老年人口</button>
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
