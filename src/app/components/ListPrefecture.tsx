@@ -2,16 +2,15 @@
 
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { MouseEventHandler, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePrefContext } from "../contexts/usePrefContext";
 
-type chartOptions = {name: string, data: number[]}[];
 export const ListPrefecture = () => {
   const { prefectures, setPrefectures } = usePrefContext();
   const [graphType, setGraphType] = useState<number|null>(0);
-  const [categories, setCategories] = useState<number[]|null>(null);
-  const [title, setTitle] = useState<string|null>(null);
-  const [series, setSeries] = useState<chartOptions|null>([]);
+  const [categories, setCategories] = useState<string[]|undefined>(undefined);
+  const [title, setTitle] = useState<string|undefined>(undefined);
+  const [series, setSeries] = useState<Highcharts.SeriesOptionsType[]|undefined>([]);
   const [options, setOptions] = useState<Highcharts.Options|null>(null);
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
 
@@ -29,17 +28,17 @@ export const ListPrefecture = () => {
 
   const setGraphData = (populations: [{ label: string, data: [] }], selectedOption: number, prefName: string) => {
     if(populations) {
-      let axisCategories: number[] = [];
+      let axisCategories: string[] = [];
       let populationData: number[] = [];
       setTitle(populations[selectedOption].label);
 
-      populations[selectedOption].data.forEach((d: { year: number, value: number }) => {
+      populations[selectedOption].data.forEach((d: { year: string, value: number }) => {
         axisCategories.push(d.year);
         populationData.push(d.value);
       });
 
       setCategories(axisCategories);
-      setSeries((series) => [...series!, { name: prefName, data: populationData }]);
+      setSeries((series) => [...series!, { name: prefName, data: populationData } as Highcharts.SeriesOptionsType]);
     }
   }
   
@@ -88,7 +87,7 @@ export const ListPrefecture = () => {
       xAxis: {
         title: { text: "年度" },
         categories: categories,
-      },
+      } as Highcharts.XAxisOptions,
       yAxis: {
         title: { text: "人口数" },
       },
@@ -103,7 +102,7 @@ export const ListPrefecture = () => {
       { prefectures ? (
           <div className="flex flex-wrap m-5">
             {prefectures.map(prefecture => (
-              <div id={prefecture.id.toString()} key={prefecture.id} className="flex items-center mr-5">
+              <label id={prefecture.id.toString()} key={prefecture.id} className="flex items-center mr-5">
                 <input
                     type="checkbox"
                     className="mr-2"
@@ -111,7 +110,7 @@ export const ListPrefecture = () => {
                     onChange={() => handleToggle(prefecture.id)}
                 />
                 <p key={prefecture.id}>{prefecture.name}</p>
-              </div>
+              </label>
             ))}
           </div>
             
@@ -120,10 +119,10 @@ export const ListPrefecture = () => {
         )
       }
       <h1>Graph</h1>
-      <button key={1} onClick={() => handleButton(0)}>総人口</button>
-      <button key={2} onClick={() => handleButton(1)}>年少人口</button>
-      <button key={3} onClick={() => handleButton(2)}>生産年齢人口</button>
-      <button key={4} onClick={() => handleButton(3)}>老年人口</button>
+      <button key={0} onClick={() => handleButton(0)}>総人口</button>
+      <button key={1} onClick={() => handleButton(1)}>年少人口</button>
+      <button key={2} onClick={() => handleButton(2)}>生産年齢人口</button>
+      <button key={3} onClick={() => handleButton(3)}>老年人口</button>
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
@@ -134,4 +133,3 @@ export const ListPrefecture = () => {
 
   );
 }
-
