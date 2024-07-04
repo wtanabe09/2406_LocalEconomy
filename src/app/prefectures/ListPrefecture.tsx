@@ -11,7 +11,7 @@ export const ListPrefecture = () => {
   const [categories, setCategories] = useState<string[]|undefined>(undefined);
   const [title, setTitle] = useState<string|undefined>(undefined);
   const [series, setSeries] = useState<Highcharts.SeriesOptionsType[]|undefined>([]);
-  const [options, setOptions] = useState<Highcharts.Options|null>(null);
+  const [options, setOptions] = useState<Highcharts.Options|undefined>(undefined);
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
 
   const getPopulation = async (prefCode: number) => {
@@ -104,10 +104,11 @@ export const ListPrefecture = () => {
             {prefectures.map(prefecture => (
               <label id={prefecture.id.toString()} key={prefecture.id} className="flex items-center mr-5">
                 <input
-                    type="checkbox"
-                    className="mr-2"
-                    checked={prefecture.checked}
-                    onChange={() => handleToggle(prefecture.id)}
+                  type="checkbox"
+                  className="mr-2"
+                  checked={prefecture.checked}
+                  onChange={() => handleToggle(prefecture.id)}
+                  data-testid={`checkbox-${prefecture.name}`}
                 />
                 <p key={prefecture.id}>{prefecture.name}</p>
               </label>

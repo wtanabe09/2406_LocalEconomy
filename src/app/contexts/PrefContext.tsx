@@ -1,4 +1,6 @@
 
+"use client";
+
 import React, { ReactNode, useEffect, useState } from "react"
 import { createContext } from "react"
 
@@ -25,9 +27,7 @@ export const PrefProvider = ({children}: Props) => {
   const setupPrefecuters = async () => {
     try {
       const res = await fetch("/api/prefecture");
-      if(!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
+      if(!res.ok) { throw new Error(`HTTP error! status: ${res.status}`); }
       const data = await res.json();
       const results = data.prefectures.result; // []
       setPrefectures(

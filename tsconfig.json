@@ -35,5 +35,5 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/app/components/ListPrefecture.test.jsx"  ]
+, "src/app/prefectures/ListPrefecture.test.jsx"  ]
 }
