@@ -4,6 +4,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useEffect, useRef, useState } from "react";
 import { usePrefContext } from "../contexts/usePrefContext";
+import styles from "./style.module.css"
 
 export const ListPrefecture = () => {
   const { prefectures, setPrefectures } = usePrefContext();
@@ -11,7 +12,7 @@ export const ListPrefecture = () => {
   const [categories, setCategories] = useState<string[]|undefined>(undefined);
   const [title, setTitle] = useState<string|undefined>(undefined);
   const [series, setSeries] = useState<Highcharts.SeriesOptionsType[]|undefined>([]);
-  const [options, setOptions] = useState<Highcharts.Options|null>(null);
+  const [options, setOptions] = useState<Highcharts.Options|undefined>(undefined);
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
 
   const getPopulation = async (prefCode: number) => {
@@ -52,7 +53,7 @@ export const ListPrefecture = () => {
     });
     setPrefectures(updatedPrefectures);
 
-    // checkされたprefecturesを下にseriesを作成
+    // checkされたprefectureのseriesを作成
     const prefecture = updatedPrefectures.find((pref) => pref.id === id);
     if (prefecture?.checked) {
       const populations = await getPopulation(id);
@@ -91,45 +92,46 @@ export const ListPrefecture = () => {
       yAxis: {
         title: { text: "人口数" },
       },
-      title: { text: title },
+      title: { 
+        text: title,
+        style: { fontSize: '16px' }
+      },
       series: series
     });
   }, [series, title]);
 
   return(
-    <div>
+    <div className={styles.container}>
       <h1>Prefectures</h1>
       { prefectures ? (
-          <div className="flex flex-wrap m-5">
-            {prefectures.map(prefecture => (
-              <label id={prefecture.id.toString()} key={prefecture.id} className="flex items-center mr-5">
-                <input
+          <div className={styles.prefList}>
+            { prefectures.map( prefecture => (
+                <label id={prefecture.id.toString()} key={prefecture.id} className={styles.prefListItem}>
+                  <input
                     type="checkbox"
-                    className="mr-2"
+                    className={styles.prefItem}
                     checked={prefecture.checked}
                     onChange={() => handleToggle(prefecture.id)}
-                />
-                <p key={prefecture.id}>{prefecture.name}</p>
-              </label>
-            ))}
+                    data-testid={`checkbox-${prefecture.name}`}
+                  />
+                  <p key={prefecture.id}>{prefecture.name}</p>
+                </label>
+              ))
+            }
           </div>
-            
-        ) : (
-          <p> No prefectures </p>
-        )
+        ) : ( <p> No prefectures </p> )
       }
       <h1>Graph</h1>
-      <button key={0} onClick={() => handleButton(0)}>総人口</button>
-      <button key={1} onClick={() => handleButton(1)}>年少人口</button>
-      <button key={2} onClick={() => handleButton(2)}>生産年齢人口</button>
-      <button key={3} onClick={() => handleButton(3)}>老年人口</button>
+      <button key={0} onClick={() => handleButton(0)} className={styles.button}>総人口</button>
+      <button key={1} onClick={() => handleButton(1)} className={styles.button}>年少人口</button>
+      <button key={2} onClick={() => handleButton(2)} className={styles.button}>生産年齢人口</button>
+      <button key={3} onClick={() => handleButton(3)} className={styles.button}>老年人口</button>
       <HighchartsReact
         highcharts={Highcharts}
         options={options}
         ref={chartComponentRef}
       />
     </div>
-    
 
   );
 }

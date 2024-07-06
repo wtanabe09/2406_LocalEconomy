@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { PrefContext } from "./PrefecturesContext";
+import { PrefContext } from "./PrefContext";
 
 export const usePrefContext = () => {
   const context = useContext(PrefContext);
