@@ -1,0 +1,11 @@
+.prefList {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media screen and (max-width: 560px) {
+  /* SP */
+  .prefList {
+    justify-content: space-between;
+  }
+}
