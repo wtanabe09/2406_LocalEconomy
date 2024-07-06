@@ -28,12 +28,12 @@
     }
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
   ],
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "src/app/prefectures/ListPrefecture.test.jsx"  ]
+    "**/*.tsx", "jest.config.js", 
+  ]
 }

@@ -16,8 +16,9 @@ export const ListPrefecture = () => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
 
   const getPopulation = async (prefCode: number) => {
+    const apiUrl = `/api/population?prefCode=${prefCode}`;
     try {
-      const res = await fetch(`/api/population?prefCode=${prefCode}`);
+      const res = await fetch(apiUrl);
       if(!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
       const populations = data.populations.result.data; // [{"総人口"}{"年少人口"}{"生産年齢人口"}{"老年人口"}]
@@ -112,7 +113,6 @@ export const ListPrefecture = () => {
                     className={styles.prefItem}
                     checked={prefecture.checked}
                     onChange={() => handleToggle(prefecture.id)}
-                    data-testid={`checkbox-${prefecture.name}`}
                   />
                   <p key={prefecture.id}>{prefecture.name}</p>
                 </label>
