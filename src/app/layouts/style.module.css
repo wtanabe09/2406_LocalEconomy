@@ -1,0 +1,17 @@
+.container {
+  width: 1000px;
+}
+
+@media screen and (max-width: 1023px) {
+  /* TL */
+  .container {
+    width: 560px;
+  }
+}
+
+@media screen and (max-width: 560px) {
+  /* SP */
+  .container {
+    width: 330px;
+  }
+}
